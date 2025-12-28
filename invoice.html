@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tax Invoice</title>
+
+<style>
+@page { size: A4; margin: 15mm; }
+
+body{
+  font-family: Arial, sans-serif;
+  color:#000;
+}
+
+.invoice{
+  max-width:210mm;
+  margin:auto;
+}
+
+/* HEADER */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+}
+.left-head{
+  display:flex;
+  gap:10px;
+}
+.logo{height:60px;}
+.company{font-size:14px;}
+.company b{font-size:16px;}
+
+.right-head{
+  text-align:center;
+  font-size:14px;
+}
+.right-head b{font-size:18px;}
+
+/* BOLD DIVIDER */
+.header-divider{
+  border-top:2px solid #000;
+  margin:8px 0 12px;
+}
+
+/* BILLING */
+.section{
+  display:flex;
+  justify-content:space-between;
+  margin-top:5px;
+}
+.col{width:48%;}
+
+.inline{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-bottom:6px;
+}
+.inline span{
+  font-weight:bold;
+  font-size:13px;
+  white-space:nowrap;
+}
+
+input{
+  width:100%;
+  border:none;
+  border-bottom:1px solid #000;
+  padding:2px 0;
+  font-size:13px;
+}
+
+/* TABLE */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+  font-size:13px;
+  border-top:2px solid #000;
+  border-bottom:2px solid #000;
+}
+
+th,td{
+  border:1px solid #000;
+  padding:6px;
+  text-align:center;
+  vertical-align:top;
+}
+
+/* ✅ HEADER ROW GREY */
+th{
+  font-weight:bold;
+  background:#e6e6e6;
+  white-space:nowrap;
+}
+
+/* COLUMN WIDTHS */
+col.desc { width:38%; }
+col.qty { width:10%; }
+col.price { width:12%; }
+col.excl { width:14%; }
+col.vat { width:10%; }
+col.total { width:16%; }
+
+/* DESCRIPTION */
+.desc textarea{
+  width:100%;
+  min-height:22px;
+  border:none;
+  resize:none;
+  font-family: Arial, sans-serif;
+  font-size:13px;
+  line-height:1.3;
+  white-space:pre-wrap;
+}
+.desc textarea:focus{outline:none;}
+
+/* ACTION BUTTONS */
+.actions{
+  margin-top:8px;
+}
+.actions button{
+  padding:6px 10px;
+  font-size:13px;
+}
+
+/* TOTALS */
+.totals{
+  width:40%;
+  margin-left:auto;
+  margin-top:10px;
+  font-size:13px;
+}
+.totals div{
+  display:flex;
+  justify-content:space-between;
+  border-bottom:1px solid #000;
+  padding:4px 0;
+}
+.totals div:last-child{
+  font-weight:bold;
+  border-bottom:none;
+}
+
+/* WORDS */
+.words{
+  margin-top:12px;
+  font-size:13px;
+  font-weight:bold;
+}
+
+/* SIGNATURE */
+.sign{
+  display:flex;
+  justify-content:space-between;
+  margin-top:30px;
+}
+.signature{height:45px;}
+.stamp{height:65px;}
+
+/* FOOTER */
+.footer{
+  display:flex;
+  justify-content:space-between;
+  margin-top:25px;
+  font-size:13px;
+}
+.bank{text-align:right;}
+
+/* PRINT CLEANUP */
+@media print{
+  input,textarea{
+    border:none !important;
+    padding:0 !important;
+    background:transparent !important;
+  }
+  button,.actions{
+    display:none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="invoice">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="left-head">
+    <img src="logo.png" class="logo">
+    <div class="company">
+      <b>AL MAHAD SCRAP TRADING FZE</b><br>
+      Business Center 4, Jebel Ali Free Zone<br>
+      Dubai, UAE<br>
+      +971-503342337<br>
+      nooralbaametal@gmail.com
+    </div>
+  </div>
+
+  <div class="right-head">
+    <b>TAX INVOICE</b><br><br>
+    <div class="inline" style="justify-content:center;">
+      <span>TRN:</span>
+      <input value="104445082100003" style="text-align:center;">
+    </div>
+  </div>
+</div>
+
+<div class="header-divider"></div>
+
+<!-- BILLING -->
+<div class="section">
+  <div class="col">
+    <div class="inline">
+      <span>Bill To:</span>
+      <input placeholder="Company Name">
+    </div>
+    <input placeholder="Client Name">
+    <input placeholder="Address Line 1">
+    <input placeholder="Address Line 2">
+    <input placeholder="Address Line 3">
+  </div>
+
+  <div class="col">
+    <div class="inline">
+      <span>Invoice No:</span>
+      <input placeholder="AMS0022">
+    </div>
+    <div class="inline">
+      <span>Date:</span>
+      <input type="date">
+    </div>
+    <div class="inline">
+      <span>Customer TRN:</span>
+      <input placeholder="104076402700003">
+    </div>
+  </div>
+</div>
+
+<!-- TABLE -->
+<table id="items">
+<colgroup>
+  <col class="desc">
+  <col class="qty">
+  <col class="price">
+  <col class="excl">
+  <col class="vat">
+  <col class="total">
+</colgroup>
+
+<tr>
+  <th>Description</th>
+  <th>Quantity</th>
+  <th>Unit price</th>
+  <th>Amount Excl. VAT</th>
+  <th>5% VAT</th>
+  <th>Total Amount</th>
+</tr>
+
+<tr>
+  <td class="desc"><textarea placeholder="Item description"></textarea></td>
+  <td><input type="number" oninput="calc()"></td>
+  <td><input type="number" oninput="calc()"></td>
+  <td class="excl">0.00</td>
+  <td class="vat">0.00</td>
+  <td class="rowtotal">0.00</td>
+</tr>
+</table>
+
+<!-- ADD / DELETE -->
+<div class="actions">
+  <button onclick="addRow()">Add Row</button>
+  <button onclick="deleteRow()">Delete Row</button>
+</div>
+
+<!-- TOTALS -->
+<div class="totals">
+  <div><span>Subtotal</span><span id="sub">0.00 AED</span></div>
+  <div><span>VAT</span><span id="vatSum">0.00 AED</span></div>
+  <div><span>Total</span><span id="grand">0.00 AED</span></div>
+</div>
+
+<div class="words">
+Amount (in words): <span id="words"></span>
+</div>
+
+<!-- SIGNATURE -->
+<div class="sign">
+  <div>
+    <p>Customer Signature</p>
+    <hr style="width:150px">
+  </div>
+  <div style="text-align:right">
+    <p>Authorized Signature</p>
+    <img src="signature.png" class="signature"><br>
+    <img src="stamp.png" class="stamp">
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div>Thanks For Business With Us.</div>
+  <div class="bank">
+    <b>Bank Details</b><br>
+    AL MAHAD SCRAP TRADING FZE<br>
+    IBAN: AE570400000883575181001<br>
+    A/C #: 0883575181001<br>
+    RAK BANK, Dragon Mart, Dubai
+  </div>
+</div>
+
+<button onclick="window.print()">Save as PDF</button>
+
+</div>
+
+<script>
+function calc(){
+  let rows=document.querySelectorAll("#items tr");
+  let sub=0, vat=0, total=0;
+
+  rows.forEach((r,i)=>{
+    if(i===0)return;
+    let q=r.cells[1].children[0].value||0;
+    let p=r.cells[2].children[0].value||0;
+    let excl=q*p;
+    let v=excl*0.05;
+    let t=excl+v;
+
+    r.querySelector(".excl").innerText=excl.toFixed(2);
+    r.querySelector(".vat").innerText=v.toFixed(2);
+    r.querySelector(".rowtotal").innerText=t.toFixed(2);
+
+    sub+=excl; vat+=v; total+=t;
+  });
+
+  document.getElementById("sub").innerText=sub.toFixed(2)+" AED";
+  document.getElementById("vatSum").innerText=vat.toFixed(2)+" AED";
+  document.getElementById("grand").innerText=total.toFixed(2)+" AED";
+  document.getElementById("words").innerText =
+    toWords(total) + " UAE dirhams only.";
+}
+
+function addRow(){
+  let table=document.getElementById("items");
+  let row=table.insertRow(-1);
+  row.innerHTML=`
+    <td class="desc"><textarea placeholder="Item description"></textarea></td>
+    <td><input type="number" oninput="calc()"></td>
+    <td><input type="number" oninput="calc()"></td>
+    <td class="excl">0.00</td>
+    <td class="vat">0.00</td>
+    <td class="rowtotal">0.00</td>`;
+}
+
+function deleteRow(){
+  let table=document.getElementById("items");
+  if(table.rows.length>2){
+    table.deleteRow(-1);
+    calc();
+  }
+}
+
+function toWords(num){
+  const a=["","one","two","three","four","five","six","seven","eight","nine","ten",
+  "eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
+  const b=["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"];
+  if(num===0) return "zero";
+  let n=Math.floor(num);
+  function w(n){
+    if(n<20) return a[n];
+    if(n<100) return b[Math.floor(n/10)]+" "+a[n%10];
+    if(n<1000) return a[Math.floor(n/100)]+" hundred "+w(n%100);
+    if(n<1000000) return w(Math.floor(n/1000))+" thousand "+w(n%1000);
+    return "";
+  }
+  return w(n);
+}
+</script>
+
+</body>
+</html>
